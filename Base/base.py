@@ -57,7 +57,9 @@ class BasePage:
 
     def send(self, locator, value, *args):
         """在输入类型元素中填写文本"""
-        self.find_ele(locator, *args).send_keys(value)
+        ele = self.find_ele(locator, *args)
+        ele.clear()
+        ele.send_keys(value)
 
     def switch_frame(self, locator):
         """切换iframe"""
@@ -73,7 +75,7 @@ class BasePage:
 
     def clear(self, locator):
         """清除输入框内容"""
-        self.find_ele(locator).click()
+        self.find_ele(locator).clear()
 
     def get_text(self, locator):
         """获取元素文本信息"""
