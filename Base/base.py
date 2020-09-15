@@ -22,6 +22,7 @@ class BasePage:
         self.driver = driver
 
     def save_image(self, filename='未命名'):
+        """保存错误截图"""
         now = time.strftime('%Y-%m-%d_%H-%M-%S')
         image_dir = os.path.join(ReportPath, 'err_image')
         filepath = os.path.join(image_dir, '{}-{}.png'.format(now, filename))
@@ -29,6 +30,8 @@ class BasePage:
         log.debug('{}错误截图保存在{}'.format(filename, filepath))
 
     def get_url(self, url):
+        """获取访问url地址"""
+        log.debug('获取访问url地址{}'.format(url))
         return self.driver.get(url)
 
     def find_ele(self, locator, *args):
@@ -49,6 +52,7 @@ class BasePage:
 
     def click_ele(self, locator, *args):
         """点击元素"""
+        log.debug('开始点击{}元素'.format(locator))
         self.find_ele(locator, *args).click()
 
     def send(self, locator, value, *args):
@@ -56,21 +60,43 @@ class BasePage:
         self.find_ele(locator, *args).send_keys(value)
 
     def switch_frame(self, locator):
-        self.driver.switch_to.frame(self.find_ele(locator))
+        """切换iframe"""
+        return self.driver.switch_to.frame(locator)
+
+    def switch_parent_frame(self):
+        """切换到上层iframe"""
+        return self.driver.switch_to.parent_frame()
+
+    def switch_to_default(self):
+        """切换到第一层iframe"""
+        return self.driver.switch_to.default_content()
 
     def clear(self, locator):
+        """清除输入框内容"""
         self.find_ele(locator).click()
 
+    def get_text(self, locator):
+        """获取元素文本信息"""
+        return self.find_ele(locator).text
+
+    def js(self, script):
+        """通过js语句操作"""
+        self.driver.execute_script(script)
+
     def act(self):
+        """创建鼠标操作对象"""
         return ActionChains(self.driver)
 
     def click_holding(self, locator, *args):
+        """模拟鼠标点击某一元素并按住不松开"""
         return self.act().click_and_hold(self.find_ele(locator, *args)).perform()
 
     def drag_drop(self, locator1, locator2, *args):
+        """模拟鼠标将元素1拖拽到元素2的位置"""
         return self.act().drag_and_drop(self.find_ele(locator1, args[0]), self.find_ele(locator2, args[1])).perform()
 
     def wait_element_visibility(self, locator, *args, timeout=10, poll_frequency=0.2):
+        """显示等待元素可见"""
         now = time.time()
         try:
             ele = WebDriverWait(self.driver, timeout, poll_frequency).until(EC.visibility_of_element_located(locator))
@@ -86,6 +112,7 @@ class BasePage:
             return ele
 
     def wait_element_click(self, locator, *args, timeout=10, poll_frequency=0.2):
+        """显示等待元素可点击"""
         now = time.time()
         try:
             ele = WebDriverWait(self.driver, timeout, poll_frequency).until(EC.element_to_be_clickable(locator)).click()
@@ -101,6 +128,7 @@ class BasePage:
             return ele
 
     def wait_frame_switch(self, locator, *args, timeout=10, poll_frequency=0.2):
+        """显示等待判断iframe是否可切入，若可以则切换到iframe"""
         now = time.time()
         try:
             ele = WebDriverWait(self.driver, timeout, poll_frequency).until(
@@ -123,11 +151,11 @@ if __name__ == '__main__':
     driver1 = webdriver.Chrome()
     url = 'https://www.baidu.com/'
     driver1.get(url)
-    s = BasePage(driver1)
+    b = BasePage(driver1)
     loc1 = (By.ID, 'kw1')
-    i = s.wait_element_visibility(loc1, '输入框', timeout=5, poll_frequency=0.1)
+    i = b.wait_element_visibility(loc1, '输入框', timeout=5, poll_frequency=0.1)
     i.send_keys('python')
     loc2 = (By.ID, 'su')
-    s.click_ele(loc2, '点击')
+    b.click_ele(loc2, '点击')
     time.sleep(5)
-    s.driver.quit()
+    b.driver.quit()
