@@ -3,8 +3,8 @@
 # @Author   :raoyu
 # @Email    :2458757210@qq.com
 # @Phone    :18893703014
+import time
 from selenium import webdriver
-
 from Locators.daoju_locator import DaoJu_Locator as djl
 from Common.handle_config import conf
 from Base.base import BasePage
@@ -31,4 +31,5 @@ if __name__ == '__main__':
     url = conf.get('daoju', 'url')
     daoju_page = DaoJu_Page(driver, url)
     daoju_page.daoju_login('1632577437', 'rao1632577437y')
+    time.sleep(3)
     driver.quit()
