@@ -17,3 +17,11 @@ class DaoJu_Locator:
     password = (By.ID, 'p')
     # 登录按钮
     log_btn = (By.XPATH, '//*[@id="login_button"]')
+    # 安全验证的iframe
+    pic_iframe = (By.ID, 'tcaptcha_iframe')
+    # 背景图片
+    target_bg = (By.ID, 'slideBg')
+    # 缺口滑块
+    template = (By.ID, 'slideBlock')
+    # 滑块
+    drag_slider = (By.ID, 'tcaptcha_drag_thumb')

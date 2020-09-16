@@ -6,6 +6,7 @@
 import os
 import time
 
+from selenium.common.exceptions import NoAlertPresentException, TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -81,6 +82,9 @@ class BasePage:
         """获取元素文本信息"""
         return self.find_ele(locator).text
 
+    def get_attr(self, locator, name, *args):
+        return self.find_ele(locator, *args).get_attribute(name)
+
     def js(self, script):
         """通过js语句操作"""
         self.driver.execute_script(script)
@@ -93,9 +97,26 @@ class BasePage:
         """模拟鼠标点击某一元素并按住不松开"""
         return self.act().click_and_hold(self.find_ele(locator, *args)).perform()
 
+    def move_mouse(self, xmove, ymove):
+        """移动鼠标"""
+        return self.act().move_by_offset(xmove, ymove).perform()
+
+    def move_ele(self, locator, xoffset, yoffset, *args):
+        """按住某一元素拖拽至偏移x,y的位置并释放鼠标"""
+        return self.act().drag_and_drop_by_offset(self.find_ele(locator, *args), xoffset, yoffset).perform()
+
     def drag_drop(self, locator1, locator2, *args):
         """模拟鼠标将元素1拖拽到元素2的位置"""
         return self.act().drag_and_drop(self.find_ele(locator1, args[0]), self.find_ele(locator2, args[1])).perform()
+
+    def alert_click(self, timeout=10, poll_frequency=0.1):
+        try:
+            WebDriverWait(self.driver, timeout, poll_frequency).until(EC.alert_is_present())
+            alert = self.driver.switch_to.alert
+            return alert
+        except TimeoutException as e:
+            log.info('{}秒还没有出现弹框'.format(timeout))
+            log.exception(e)
 
     def wait_element_visibility(self, locator, *args, timeout=10, poll_frequency=0.2):
         """显示等待元素可见"""
