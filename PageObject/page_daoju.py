@@ -49,7 +49,7 @@ if __name__ == '__main__':
     driver = webdriver.Chrome()
     url = conf.get('daoju', 'url')
     daoju_page = DaoJu_Page(driver, url)
-    daoju_page.daoju_login('1632577437', 'rao1632577437y')
+    daoju_page.daoju_login('qq号', '密码')
     time.sleep(0.5)
     daoju_page.silder_running()
     time.sleep(10)
